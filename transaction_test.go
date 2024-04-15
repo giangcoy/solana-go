@@ -314,3 +314,41 @@ func BenchmarkTransactionVerifySignatures(b *testing.B) {
 		tx.VerifySignatures()
 	}
 }
+
+/*
+BenchmarkNewTransaction-8         335721              3739 ns/op            1472 B/op         24 allocs/op
+BenchmarkNewTransaction-8         406689              2965 ns/op            1096 B/op         17 allocs/op
+BenchmarkNewTransaction-8         347487              2970 ns/op            1208 B/op         17 allocs/op
+*/
+func BenchmarkNewTransaction(b *testing.B) {
+	debugNewTransaction = false
+
+	instructions := []Instruction{
+		&testTransactionInstructions{
+			accounts: []*AccountMeta{
+				{PublicKey: MustPublicKeyFromBase58("A9QnpgfhCkmiBSjgBuWk76Wo3HxzxvDopUq9x6UUMmjn"), IsSigner: true, IsWritable: false},
+				{PublicKey: MustPublicKeyFromBase58("9hFtYBYmBJCVguRYs9pBTWKYAFoKfjYR7zBPpEkVsmD"), IsSigner: true, IsWritable: true},
+			},
+			data:      []byte{0xaa, 0xbb},
+			programID: MustPublicKeyFromBase58("11111111111111111111111111111111"),
+		},
+		&testTransactionInstructions{
+			accounts: []*AccountMeta{
+				{PublicKey: MustPublicKeyFromBase58("SysvarC1ock11111111111111111111111111111111"), IsSigner: false, IsWritable: false},
+				{PublicKey: MustPublicKeyFromBase58("SysvarS1otHashes111111111111111111111111111"), IsSigner: false, IsWritable: true},
+				{PublicKey: MustPublicKeyFromBase58("9hFtYBYmBJCVguRYs9pBTWKYAFoKfjYR7zBPpEkVsmD"), IsSigner: false, IsWritable: true},
+				{PublicKey: MustPublicKeyFromBase58("6FzXPEhCJoBx7Zw3SN9qhekHemd6E2b8kVguitmVAngW"), IsSigner: true, IsWritable: false},
+			},
+			data:      []byte{0xcc, 0xdd},
+			programID: MustPublicKeyFromBase58("Vote111111111111111111111111111111111111111"),
+		},
+	}
+
+	blockhash, _ := HashFromBase58("A9QnpgfhCkmiBSjgBuWk76Wo3HxzxvDopUq9x6UUMmjn")
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		NewTransaction(instructions, blockhash)
+	}
+}

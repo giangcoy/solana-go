@@ -250,33 +250,31 @@ func NewTransaction(instructions []Instruction, recentBlockHash Hash, opts ...Tr
 		}
 	}
 
-	programIDs := make(PublicKeySlice, 0)
-	accounts := []*AccountMeta{}
+	programIDsMap := make(map[PublicKey]bool, len(instructions))
+	accounts := make([]*AccountMeta, 0, len(instructions)*16)
 	for _, instruction := range instructions {
 		accounts = append(accounts, instruction.Accounts()...)
-		programIDs.UniqueAppend(instruction.ProgramID())
-	}
+		programIDsMap[instruction.ProgramID()] = true
 
-	// for IsInvoked check
-	programIDsMap := make(map[PublicKey]struct{}, len(programIDs))
-	// Add programID to the account list
-	for _, programID := range programIDs {
+	}
+	programIDs := make(PublicKeySlice, len(programIDsMap))
+	for programID := range programIDsMap {
+		programIDs.Append(programID)
 		accounts = append(accounts, &AccountMeta{
 			PublicKey:  programID,
 			IsSigner:   false,
 			IsWritable: false,
 		})
 
-		programIDsMap[programID] = struct{}{}
 	}
 
 	// Sort. Prioritizing first by signer, then by writable
-	sort.SliceStable(accounts, func(i, j int) bool {
+	sort.Slice(accounts, func(i, j int) bool {
 		return accounts[i].less(accounts[j])
 	})
 
 	uniqAccountsMap := map[PublicKey]uint64{}
-	uniqAccounts := []*AccountMeta{}
+	uniqAccounts := make([]*AccountMeta, 0, len(accounts))
 	for _, acc := range accounts {
 		if index, found := uniqAccountsMap[acc.PublicKey]; found {
 			uniqAccounts[index].IsWritable = uniqAccounts[index].IsWritable || acc.IsWritable
@@ -294,6 +292,7 @@ func NewTransaction(instructions []Instruction, recentBlockHash Hash, opts ...Tr
 	for idx, acc := range uniqAccounts {
 		if acc.PublicKey.Equals(feePayer) {
 			feePayerIndex = idx
+			break
 		}
 	}
 	if debugNewTransaction {
@@ -339,6 +338,10 @@ func NewTransaction(instructions []Instruction, recentBlockHash Hash, opts ...Tr
 		ReadonlyIndexes []uint8
 		Readonly        []PublicKey
 	})
+	if len(message.AccountKeys) == 0 {
+		message.AccountKeys = make([]PublicKey, 0, len(allKeys))
+
+	}
 	for idx, acc := range allKeys {
 
 		if debugNewTransaction {
@@ -425,6 +428,9 @@ func NewTransaction(instructions []Instruction, recentBlockHash Hash, opts ...Tr
 			zap.Uint8("num_readonly_signed_accounts", message.Header.NumReadonlySignedAccounts),
 			zap.Uint8("num_readonly_unsigned_accounts", message.Header.NumReadonlyUnsignedAccounts),
 		)
+	}
+	if len(message.Instructions) == 0 {
+		message.Instructions = make([]CompiledInstruction, 0, len(instructions))
 	}
 
 	for txIdx, instruction := range instructions {
