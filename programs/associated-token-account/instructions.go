@@ -19,9 +19,9 @@ import (
 
 	spew "github.com/davecgh/go-spew/spew"
 	bin "github.com/gagliardetto/binary"
-	solana "github.com/gagliardetto/solana-go"
-	text "github.com/gagliardetto/solana-go/text"
 	treeout "github.com/gagliardetto/treeout"
+	solana "github.com/giangcoy/solana-go"
+	text "github.com/giangcoy/solana-go/text"
 )
 
 var ProgramID solana.PublicKey = solana.SPLAssociatedTokenAccountProgramID

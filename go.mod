@@ -1,17 +1,17 @@
 module github.com/giangcoy/solana-go
 
-go 1.22.1
+go 1.21.6
 
 require (
 	filippo.io/edwards25519 v1.1.0
 	github.com/AlekSi/pointer v1.2.0
 	github.com/GeertJohan/go.rice v1.0.3
+	github.com/btcsuite/btcd/btcutil v1.1.5
 	github.com/buger/jsonparser v1.1.1
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc
 	github.com/fatih/color v1.16.0
 	github.com/gagliardetto/binary v0.8.0
 	github.com/gagliardetto/gofuzz v1.2.2
-	github.com/gagliardetto/solana-go v1.10.0
 	github.com/gagliardetto/treeout v0.1.4
 	github.com/google/go-cmp v0.6.0
 	github.com/google/uuid v1.6.0
@@ -44,7 +44,6 @@ require (
 	cloud.google.com/go/compute/metadata v0.2.3 // indirect
 	github.com/benbjohnson/clock v1.3.0 // indirect
 	github.com/blendle/zapdriver v1.3.1 // indirect
-	github.com/btcsuite/btcd/btcutil v1.1.5 // indirect
 	github.com/daaku/go.zipexe v1.0.2 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect

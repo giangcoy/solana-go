@@ -163,9 +163,9 @@ import (
 	"time"
 
 	"github.com/davecgh/go-spew/spew"
-	"github.com/gagliardetto/solana-go"
-	lookup "github.com/gagliardetto/solana-go/programs/address-lookup-table"
-	"github.com/gagliardetto/solana-go/rpc"
+	"github.com/giangcoy/solana-go"
+	lookup "github.com/giangcoy/solana-go/programs/address-lookup-table"
+	"github.com/giangcoy/solana-go/rpc"
 	"golang.org/x/time/rate"
 )
 
@@ -265,10 +265,10 @@ import (
 
   "github.com/davecgh/go-spew/spew"
   bin "github.com/gagliardetto/binary"
-  "github.com/gagliardetto/solana-go"
-  "github.com/gagliardetto/solana-go/programs/system"
-  "github.com/gagliardetto/solana-go/rpc"
-  "github.com/gagliardetto/solana-go/text"
+  "github.com/giangcoy/solana-go"
+  "github.com/giangcoy/solana-go/programs/system"
+  "github.com/giangcoy/solana-go/rpc"
+  "github.com/giangcoy/solana-go/text"
 )
 
 func main() {
@@ -459,7 +459,7 @@ import (
 
   "golang.org/x/time/rate"
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -490,7 +490,7 @@ import (
 
   "golang.org/x/time/rate"
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -538,8 +538,8 @@ import (
   "net/http"
   "time"
 
-  "github.com/gagliardetto/solana-go/rpc"
-  "github.com/gagliardetto/solana-go/rpc/jsonrpc"
+  "github.com/giangcoy/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc/jsonrpc"
 )
 
 func NewHTTPTransport(
@@ -606,8 +606,8 @@ import (
   "context"
   "fmt"
 
-  "github.com/gagliardetto/solana-go"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -713,13 +713,13 @@ import (
   "time"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go"
-  "github.com/gagliardetto/solana-go/programs/system"
-  "github.com/gagliardetto/solana-go/rpc"
-  confirm "github.com/gagliardetto/solana-go/rpc/sendAndConfirmTransaction"
-  "github.com/gagliardetto/solana-go/rpc/jsonrpc"
-  "github.com/gagliardetto/solana-go/rpc/ws"
-  "github.com/gagliardetto/solana-go/text"
+  "github.com/giangcoy/solana-go"
+  "github.com/giangcoy/solana-go/programs/system"
+  "github.com/giangcoy/solana-go/rpc"
+  confirm "github.com/giangcoy/solana-go/rpc/sendAndConfirmTransaction"
+  "github.com/giangcoy/solana-go/rpc/jsonrpc"
+  "github.com/giangcoy/solana-go/rpc/ws"
+  "github.com/giangcoy/solana-go/text"
 )
 
 func main() {
@@ -920,9 +920,9 @@ import (
 
   "github.com/davecgh/go-spew/spew"
   bin "github.com/gagliardetto/binary"
-  solana "github.com/gagliardetto/solana-go"
-  "github.com/gagliardetto/solana-go/programs/token"
-  "github.com/gagliardetto/solana-go/rpc"
+  solana "github.com/giangcoy/solana-go"
+  "github.com/giangcoy/solana-go/programs/token"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -1026,8 +1026,8 @@ import (
   "math/big"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -1064,8 +1064,8 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -1118,7 +1118,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -1150,7 +1150,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -1177,7 +1177,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -1220,7 +1220,7 @@ import (
   "time"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -1256,7 +1256,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -1294,7 +1294,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -1332,7 +1332,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -1359,8 +1359,8 @@ import (
 
   "github.com/AlekSi/pointer"
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -1417,7 +1417,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -1458,7 +1458,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -1498,8 +1498,8 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -1532,8 +1532,8 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -1571,7 +1571,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -1598,7 +1598,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -1624,7 +1624,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -1660,7 +1660,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -1686,7 +1686,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -1713,7 +1713,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -1741,7 +1741,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -1767,7 +1767,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -1793,7 +1793,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -1820,7 +1820,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -1848,7 +1848,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -1875,7 +1875,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -1901,7 +1901,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -1928,7 +1928,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -1954,8 +1954,8 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -1989,7 +1989,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -2017,7 +2017,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -2043,7 +2043,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -2069,7 +2069,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -2095,7 +2095,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -2124,8 +2124,8 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -2176,8 +2176,8 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -2205,7 +2205,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -2231,7 +2231,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -2259,8 +2259,8 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -2289,8 +2289,8 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -2320,8 +2320,8 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -2348,7 +2348,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -2375,7 +2375,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -2402,7 +2402,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -2438,7 +2438,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -2464,8 +2464,8 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -2495,7 +2495,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -2522,8 +2522,8 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -2552,8 +2552,8 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -2586,9 +2586,9 @@ import (
 
   "github.com/davecgh/go-spew/spew"
   bin "github.com/gagliardetto/binary"
-  "github.com/gagliardetto/solana-go"
-  "github.com/gagliardetto/solana-go/programs/token"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go"
+  "github.com/giangcoy/solana-go/programs/token"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -2639,8 +2639,8 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -2669,8 +2669,8 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -2699,8 +2699,8 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -2752,7 +2752,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -2779,7 +2779,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -2805,8 +2805,8 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -2835,8 +2835,8 @@ import (
   "context"
   "fmt"
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -2868,7 +2868,7 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -2894,8 +2894,8 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go"
-  "github.com/gagliardetto/solana-go/rpc"
+  "github.com/giangcoy/solana-go"
+  "github.com/giangcoy/solana-go/rpc"
 )
 
 func main() {
@@ -2948,9 +2948,9 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go"
-  "github.com/gagliardetto/solana-go/rpc"
-  "github.com/gagliardetto/solana-go/rpc/ws"
+  "github.com/giangcoy/solana-go"
+  "github.com/giangcoy/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc/ws"
 )
 
 func main() {
@@ -3010,9 +3010,9 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go"
-  "github.com/gagliardetto/solana-go/rpc"
-  "github.com/gagliardetto/solana-go/rpc/ws"
+  "github.com/giangcoy/solana-go"
+  "github.com/giangcoy/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc/ws"
 )
 
 func main() {
@@ -3072,9 +3072,9 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go"
-  "github.com/gagliardetto/solana-go/rpc"
-  "github.com/gagliardetto/solana-go/rpc/ws"
+  "github.com/giangcoy/solana-go"
+  "github.com/giangcoy/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc/ws"
 )
 
 func main() {
@@ -3125,8 +3125,8 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
-  "github.com/gagliardetto/solana-go/rpc/ws"
+  "github.com/giangcoy/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc/ws"
 )
 
 func main() {
@@ -3159,9 +3159,9 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go"
-  "github.com/gagliardetto/solana-go/rpc"
-  "github.com/gagliardetto/solana-go/rpc/ws"
+  "github.com/giangcoy/solana-go"
+  "github.com/giangcoy/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc/ws"
 )
 
 func main() {
@@ -3200,8 +3200,8 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
-  "github.com/gagliardetto/solana-go/rpc/ws"
+  "github.com/giangcoy/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc/ws"
 )
 
 func main() {
@@ -3235,8 +3235,8 @@ import (
   "context"
 
   "github.com/davecgh/go-spew/spew"
-  "github.com/gagliardetto/solana-go/rpc"
-  "github.com/gagliardetto/solana-go/rpc/ws"
+  "github.com/giangcoy/solana-go/rpc"
+  "github.com/giangcoy/solana-go/rpc/ws"
 )
 
 func main() {
