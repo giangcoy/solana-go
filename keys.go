@@ -30,7 +30,7 @@ import (
 	"sort"
 
 	"filippo.io/edwards25519"
-	"github.com/mr-tron/base58"
+	"github.com/btcsuite/btcd/btcutil/base58"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/bsontype"
 )
@@ -46,10 +46,8 @@ func MustPrivateKeyFromBase58(in string) PrivateKey {
 }
 
 func PrivateKeyFromBase58(privkey string) (PrivateKey, error) {
-	res, err := base58.Decode(privkey)
-	if err != nil {
-		return nil, err
-	}
+	res := base58.Decode(privkey)
+
 	return res, nil
 }
 
@@ -144,7 +142,7 @@ func MustPublicKeyFromBase58(in string) PublicKey {
 }
 
 func PublicKeyFromBase58(in string) (out PublicKey, err error) {
-	val, err := base58.Decode(in)
+	val := base58.Decode(in)
 	if err != nil {
 		return out, fmt.Errorf("decode: %w", err)
 	}

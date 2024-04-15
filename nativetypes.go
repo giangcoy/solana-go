@@ -23,9 +23,9 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/btcsuite/btcd/btcutil/base58"
 	bin "github.com/gagliardetto/binary"
 	"github.com/mostynb/zstdpool-freelist"
-	"github.com/mr-tron/base58"
 )
 
 type Padding []byte
@@ -114,7 +114,7 @@ func (sig Signature) Equals(pb Signature) bool {
 
 // SignatureFromBase58 decodes a base58 string into a Signature.
 func SignatureFromBase58(in string) (out Signature, err error) {
-	val, err := base58.Decode(in)
+	val := base58.Decode(in)
 	if err != nil {
 		return
 	}
@@ -178,7 +178,7 @@ func (p *Signature) UnmarshalJSON(data []byte) (err error) {
 		return
 	}
 
-	dat, err := base58.Decode(s)
+	dat := base58.Decode(s)
 	if err != nil {
 		return err
 	}
@@ -220,7 +220,7 @@ func (t *Base58) UnmarshalJSON(data []byte) (err error) {
 		return nil
 	}
 
-	*t, err = base58.Decode(s)
+	*t = base58.Decode(s)
 	return
 }
 
@@ -264,11 +264,7 @@ func (t *Data) UnmarshalJSON(data []byte) (err error) {
 
 	switch t.Encoding {
 	case EncodingBase58:
-		var err error
-		t.Content, err = base58.Decode(contentString)
-		if err != nil {
-			return err
-		}
+		t.Content = base58.Decode(contentString)
 	case EncodingBase64:
 		var err error
 		t.Content, err = base64.StdEncoding.DecodeString(contentString)

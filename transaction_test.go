@@ -21,8 +21,8 @@ import (
 	"encoding/base64"
 	"testing"
 
+	"github.com/btcsuite/btcd/btcutil/base58"
 	bin "github.com/gagliardetto/binary"
-	"github.com/mr-tron/base58"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -227,7 +227,7 @@ func TestTransactionDecode(t *testing.T) {
 		tx.Message.RecentBlockhash,
 	)
 
-	decodedData, err := base58.Decode("3Bxs4ART6LMJ13T5")
+	decodedData := base58.Decode("3Bxs4ART6LMJ13T5")
 	require.NoError(t, err)
 	require.Equal(t, 12, len(decodedData))
 	require.Equal(t, []byte{2, 0, 0, 0, 57, 48, 0, 0, 0, 0, 0, 0}, decodedData)
