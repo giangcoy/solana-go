@@ -319,6 +319,8 @@ func BenchmarkTransactionVerifySignatures(b *testing.B) {
 BenchmarkNewTransaction-8         335721              3739 ns/op            1472 B/op         24 allocs/op
 BenchmarkNewTransaction-8         406689              2965 ns/op            1096 B/op         17 allocs/op
 BenchmarkNewTransaction-8         347487              2970 ns/op            1208 B/op         17 allocs/op
+BenchmarkNewTransaction-8   	  478252	      2268 ns/op	     864 B/op	      15 allocs/op
+BenchmarkNewTransaction-8         531816              2273 ns/op             864 B/op         13 allocs/op
 */
 func BenchmarkNewTransaction(b *testing.B) {
 	debugNewTransaction = false

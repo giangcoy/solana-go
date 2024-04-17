@@ -21,7 +21,6 @@ import (
 	"bytes"
 	"encoding/base64"
 	"fmt"
-	"sort"
 
 	"github.com/davecgh/go-spew/spew"
 	bin "github.com/gagliardetto/binary"
@@ -205,8 +204,15 @@ type addressTablePubkeyWithIndex struct {
 	addressTable PublicKey
 	index        uint8
 }
+type lookupMap struct { // extended MessageAddressTableLookup
+	AccountKey      PublicKey // The account key of the address table.
+	WritableIndexes []uint8
+	Writable        []PublicKey
+	ReadonlyIndexes []uint8
+	Readonly        []PublicKey
+}
 
-func NewTransaction(instructions []Instruction, recentBlockHash Hash, opts ...TransactionOption) (*Transaction, error) {
+func NewTransaction(instructions []Instruction, recentBlockHash Hash, opts ...TransactionOption) (trans *Transaction, err error) {
 	if len(instructions) == 0 {
 		return nil, fmt.Errorf("requires at-least one instruction to create a transaction")
 	}
@@ -249,95 +255,82 @@ func NewTransaction(instructions []Instruction, recentBlockHash Hash, opts ...Tr
 			}
 		}
 	}
-
+	accounts := make([]*AccountMeta, 0, len(instructions)*8)
+	accounts1 := make([]*AccountMeta, 0, len(instructions))
+	accounts2 := make([]*AccountMeta, 0, len(instructions))
 	programIDsMap := make(map[PublicKey]bool, len(instructions))
-	accounts := make([]*AccountMeta, 0, len(instructions)*16)
 	for _, instruction := range instructions {
-		accounts = append(accounts, instruction.Accounts()...)
+		//accounts = append(accounts, instruction.Accounts()...)
+		for _, acc := range instruction.Accounts() {
+			if acc.IsSigner {
+				accounts = append(accounts, acc)
+			} else if acc.IsWritable {
+				accounts1 = append(accounts1, acc)
+			} else {
+				accounts2 = append(accounts2, acc)
+			}
+		}
 		programIDsMap[instruction.ProgramID()] = true
 
 	}
-	programIDs := make(PublicKeySlice, len(programIDsMap))
+
+	accounts = append(accounts, accounts1...)
+	accounts = append(accounts, accounts2...)
 	for programID := range programIDsMap {
-		programIDs.Append(programID)
-		accounts = append(accounts, &AccountMeta{
-			PublicKey:  programID,
-			IsSigner:   false,
-			IsWritable: false,
-		})
-
+		accounts = append(accounts, &AccountMeta{PublicKey: programID})
 	}
-
-	// Sort. Prioritizing first by signer, then by writable
-	sort.Slice(accounts, func(i, j int) bool {
-		return accounts[i].less(accounts[j])
-	})
-
-	uniqAccountsMap := map[PublicKey]uint64{}
-	uniqAccounts := make([]*AccountMeta, 0, len(accounts))
+	uniqueMapAcc := map[PublicKey]*AccountMeta{} //make(map[PublicKey]*AccountMeta, len(accounts))
+	n := 0
 	for _, acc := range accounts {
-		if index, found := uniqAccountsMap[acc.PublicKey]; found {
-			uniqAccounts[index].IsWritable = uniqAccounts[index].IsWritable || acc.IsWritable
-			continue
-		}
-		uniqAccounts = append(uniqAccounts, acc)
-		uniqAccountsMap[acc.PublicKey] = uint64(len(uniqAccounts) - 1)
-	}
-
-	if debugNewTransaction {
-		zlog.Debug("unique account sorted", zap.Int("account_count", len(uniqAccounts)))
-	}
-	// Move fee payer to the front
-	feePayerIndex := -1
-	for idx, acc := range uniqAccounts {
-		if acc.PublicKey.Equals(feePayer) {
-			feePayerIndex = idx
-			break
+		if a := uniqueMapAcc[acc.PublicKey]; a != nil {
+			a.IsWritable = a.IsWritable || acc.IsWritable
+		} else {
+			accounts[n] = acc
+			uniqueMapAcc[acc.PublicKey] = acc
+			n++
 		}
 	}
-	if debugNewTransaction {
-		zlog.Debug("current fee payer index", zap.Int("fee_payer_index", feePayerIndex))
-	}
+	uniqAccounts := accounts[:n]
+	if len(uniqAccounts) != 0 && uniqAccounts[0].PublicKey.Equals(feePayer) {
+		uniqAccounts[0].IsSigner = true
+		uniqAccounts[0].IsWritable = true
 
-	accountCount := len(uniqAccounts)
-	if feePayerIndex < 0 {
-		// fee payer is not part of accounts we want to add it
-		accountCount++
-	}
-	allKeys := make([]*AccountMeta, accountCount)
-
-	itr := 1
-	for idx, uniqAccount := range uniqAccounts {
-		if idx == feePayerIndex {
-			uniqAccount.IsSigner = true
-			uniqAccount.IsWritable = true
-			allKeys[0] = uniqAccount
-			continue
-		}
-		allKeys[itr] = uniqAccount
-		itr++
-	}
-
-	if feePayerIndex < 0 {
-		// fee payer is not part of accounts we want to add it
+	} else {
 		feePayerAccount := &AccountMeta{
 			PublicKey:  feePayer,
 			IsSigner:   true,
 			IsWritable: true,
 		}
-		allKeys[0] = feePayerAccount
+		prev := feePayerAccount
+		found := false
+		for i, acc := range uniqAccounts {
+			if i == 0 {
+				uniqAccounts[0] = feePayerAccount
+				prev = acc
+				continue
+			}
+			if acc.PublicKey.Equals(feePayer) {
+				prev.IsSigner = true
+				prev.IsWritable = true
+				uniqAccounts[i] = prev
+				found = true
+				break
+			}
+			uniqAccounts[i] = prev
+			prev = acc
+		}
+		if !found {
+			uniqAccounts = append(uniqAccounts, prev)
+		}
 	}
-
-	message := Message{
-		RecentBlockhash: recentBlockHash,
+	allKeys := uniqAccounts
+	trans = &Transaction{
+		Message: Message{
+			RecentBlockhash: recentBlockHash,
+		},
 	}
-	lookupsMap := make(map[PublicKey]struct { // extended MessageAddressTableLookup
-		AccountKey      PublicKey // The account key of the address table.
-		WritableIndexes []uint8
-		Writable        []PublicKey
-		ReadonlyIndexes []uint8
-		Readonly        []PublicKey
-	})
+	message := &trans.Message
+	lookupsMap := make(map[PublicKey]lookupMap)
 	if len(message.AccountKeys) == 0 {
 		message.AccountKeys = make([]PublicKey, 0, len(allKeys))
 
@@ -350,22 +343,22 @@ func NewTransaction(instructions []Instruction, recentBlockHash Hash, opts ...Tr
 				zap.Stringer("account_pub_key", acc.PublicKey),
 			)
 		}
+		if idx != 0 && !acc.IsSigner && !programIDsMap[acc.PublicKey] {
+			addressLookupKeyEntry, isPresentedInTables := addressLookupKeysMap[acc.PublicKey]
+			// skip fee payer
+			if isPresentedInTables {
+				lookup := lookupsMap[addressLookupKeyEntry.addressTable]
+				if acc.IsWritable {
+					lookup.WritableIndexes = append(lookup.WritableIndexes, addressLookupKeyEntry.index)
+					lookup.Writable = append(lookup.Writable, acc.PublicKey)
+				} else {
+					lookup.ReadonlyIndexes = append(lookup.ReadonlyIndexes, addressLookupKeyEntry.index)
+					lookup.Readonly = append(lookup.Readonly, acc.PublicKey)
+				}
 
-		addressLookupKeyEntry, isPresentedInTables := addressLookupKeysMap[acc.PublicKey]
-		_, isInvoked := programIDsMap[acc.PublicKey]
-		// skip fee payer
-		if isPresentedInTables && idx != 0 && !acc.IsSigner && !isInvoked {
-			lookup := lookupsMap[addressLookupKeyEntry.addressTable]
-			if acc.IsWritable {
-				lookup.WritableIndexes = append(lookup.WritableIndexes, addressLookupKeyEntry.index)
-				lookup.Writable = append(lookup.Writable, acc.PublicKey)
-			} else {
-				lookup.ReadonlyIndexes = append(lookup.ReadonlyIndexes, addressLookupKeyEntry.index)
-				lookup.Readonly = append(lookup.Readonly, acc.PublicKey)
+				lookupsMap[addressLookupKeyEntry.addressTable] = lookup
+				continue // prevent changing message.Header properties
 			}
-
-			lookupsMap[addressLookupKeyEntry.addressTable] = lookup
-			continue // prevent changing message.Header properties
 		}
 
 		message.AccountKeys = append(message.AccountKeys, acc.PublicKey)
@@ -430,7 +423,7 @@ func NewTransaction(instructions []Instruction, recentBlockHash Hash, opts ...Tr
 		)
 	}
 	if len(message.Instructions) == 0 {
-		message.Instructions = make([]CompiledInstruction, 0, len(instructions))
+		message.Instructions = make([]CompiledInstruction, len(instructions))
 	}
 
 	for txIdx, instruction := range instructions {
@@ -443,16 +436,12 @@ func NewTransaction(instructions []Instruction, recentBlockHash Hash, opts ...Tr
 		if err != nil {
 			return nil, fmt.Errorf("unable to encode instructions [%d]: %w", txIdx, err)
 		}
-		message.Instructions = append(message.Instructions, CompiledInstruction{
-			ProgramIDIndex: accountKeyIndex[instruction.ProgramID()],
-			Accounts:       accountIndex,
-			Data:           data,
-		})
+		message.Instructions[txIdx].ProgramIDIndex = accountKeyIndex[instruction.ProgramID()]
+		message.Instructions[txIdx].Data = data
+		message.Instructions[txIdx].Accounts = accountIndex
 	}
 
-	return &Transaction{
-		Message: message,
-	}, nil
+	return
 }
 
 type privateKeyGetter func(key PublicKey) *PrivateKey
