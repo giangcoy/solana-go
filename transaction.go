@@ -25,7 +25,6 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	bin "github.com/gagliardetto/binary"
 	"github.com/gagliardetto/treeout"
-	"go.uber.org/zap"
 
 	"github.com/giangcoy/solana-go/text"
 )
@@ -223,17 +222,24 @@ func NewTransaction(instructions []Instruction, recentBlockHash Hash, opts ...Tr
 	}
 
 	feePayer := options.payer
+	var feePayerAccount *AccountMeta
 	if feePayer.IsZero() {
-		found := false
 		for _, act := range instructions[0].Accounts() {
 			if act.IsSigner {
-				feePayer = act.PublicKey
-				found = true
+				feePayerAccount = act
+				feePayerAccount.IsWritable = true
+
 				break
 			}
 		}
-		if !found {
+		if feePayerAccount == nil {
 			return nil, fmt.Errorf("cannot determine fee payer. You can ether pass the fee payer via the 'TransactionWithInstructions' option parameter or it falls back to the first instruction's first signer")
+		}
+	} else {
+		feePayerAccount = &AccountMeta{
+			PublicKey:  feePayer,
+			IsSigner:   true,
+			IsWritable: true,
 		}
 	}
 
@@ -259,16 +265,21 @@ func NewTransaction(instructions []Instruction, recentBlockHash Hash, opts ...Tr
 	accounts1 := make([]*AccountMeta, 0, len(instructions))
 	accounts2 := make([]*AccountMeta, 0, len(instructions))
 	programIDsMap := make(map[PublicKey]bool, len(instructions))
+	accounts = append(accounts, feePayerAccount)
 	for _, instruction := range instructions {
 		//accounts = append(accounts, instruction.Accounts()...)
 		for _, acc := range instruction.Accounts() {
-			if acc.IsSigner {
+			switch {
+			case acc == feePayerAccount:
+			case acc.IsSigner:
 				accounts = append(accounts, acc)
-			} else if acc.IsWritable {
+			case acc.IsWritable:
 				accounts1 = append(accounts1, acc)
-			} else {
+			default:
 				accounts2 = append(accounts2, acc)
+
 			}
+
 		}
 		programIDsMap[instruction.ProgramID()] = true
 
@@ -290,59 +301,17 @@ func NewTransaction(instructions []Instruction, recentBlockHash Hash, opts ...Tr
 			n++
 		}
 	}
-	uniqAccounts := accounts[:n]
-	if len(uniqAccounts) != 0 && uniqAccounts[0].PublicKey.Equals(feePayer) {
-		uniqAccounts[0].IsSigner = true
-		uniqAccounts[0].IsWritable = true
-
-	} else {
-		feePayerAccount := &AccountMeta{
-			PublicKey:  feePayer,
-			IsSigner:   true,
-			IsWritable: true,
-		}
-		prev := feePayerAccount
-		found := false
-		for i, acc := range uniqAccounts {
-			if i == 0 {
-				uniqAccounts[0] = feePayerAccount
-				prev = acc
-				continue
-			}
-			if acc.PublicKey.Equals(feePayer) {
-				prev.IsSigner = true
-				prev.IsWritable = true
-				uniqAccounts[i] = prev
-				found = true
-				break
-			}
-			uniqAccounts[i] = prev
-			prev = acc
-		}
-		if !found {
-			uniqAccounts = append(uniqAccounts, prev)
-		}
-	}
-	allKeys := uniqAccounts
+	allKeys := accounts[:n]
 	trans = &Transaction{
 		Message: Message{
 			RecentBlockhash: recentBlockHash,
+			AccountKeys:     make([]PublicKey, 0, len(allKeys)),
+			Instructions:    make([]CompiledInstruction, len(instructions)),
 		},
 	}
 	message := &trans.Message
 	lookupsMap := make(map[PublicKey]lookupMap)
-	if len(message.AccountKeys) == 0 {
-		message.AccountKeys = make([]PublicKey, 0, len(allKeys))
-
-	}
 	for idx, acc := range allKeys {
-
-		if debugNewTransaction {
-			zlog.Debug("transaction account",
-				zap.Int("account_index", idx),
-				zap.Stringer("account_pub_key", acc.PublicKey),
-			)
-		}
 		if idx != 0 && !acc.IsSigner && !programIDsMap[acc.PublicKey] {
 			addressLookupKeyEntry, isPresentedInTables := addressLookupKeysMap[acc.PublicKey]
 			// skip fee payer
@@ -414,18 +383,6 @@ func NewTransaction(instructions []Instruction, recentBlockHash Hash, opts ...Tr
 		accountKeyIndex[acc] = idx
 		idx++
 	}
-
-	if debugNewTransaction {
-		zlog.Debug("message header compiled",
-			zap.Uint8("num_required_signatures", message.Header.NumRequiredSignatures),
-			zap.Uint8("num_readonly_signed_accounts", message.Header.NumReadonlySignedAccounts),
-			zap.Uint8("num_readonly_unsigned_accounts", message.Header.NumReadonlyUnsignedAccounts),
-		)
-	}
-	if len(message.Instructions) == 0 {
-		message.Instructions = make([]CompiledInstruction, len(instructions))
-	}
-
 	for txIdx, instruction := range instructions {
 		accounts = instruction.Accounts()
 		accountIndex := make([]uint16, len(accounts))
