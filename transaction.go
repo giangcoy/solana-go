@@ -261,88 +261,87 @@ func NewTransaction(instructions []Instruction, recentBlockHash Hash, opts ...Tr
 			}
 		}
 	}
-	accounts := make([]*AccountMeta, 0, len(instructions)*8)
-	accounts1 := make([]*AccountMeta, 0, len(instructions))
-	accounts2 := make([]*AccountMeta, 0, len(instructions))
-	programIDsMap := make(map[PublicKey]bool, len(instructions))
-	accounts = append(accounts, feePayerAccount)
+	nInstruction := len(instructions)
+	accountTbl := [...][]*AccountMeta{
+		make([]*AccountMeta, 0, nInstruction),
+		make([]*AccountMeta, 0, nInstruction),
+		make([]*AccountMeta, 0, nInstruction),
+		make([]*AccountMeta, 0, nInstruction),
+	}
+
+	accountTbl[0] = append(accountTbl[0], feePayerAccount)
+	uniqueMapAcc := map[PublicKey]*AccountMeta{}
 	for _, instruction := range instructions {
-		//accounts = append(accounts, instruction.Accounts()...)
 		for _, acc := range instruction.Accounts() {
+			if a := uniqueMapAcc[acc.PublicKey]; a != nil {
+				a.IsWritable = a.IsWritable || acc.IsWritable
+				continue
+			}
+			uniqueMapAcc[acc.PublicKey] = acc
 			switch {
 			case acc == feePayerAccount:
 			case acc.IsSigner:
-				accounts = append(accounts, acc)
+				accountTbl[0] = append(accountTbl[0], acc)
 			case acc.IsWritable:
-				accounts1 = append(accounts1, acc)
+				accountTbl[1] = append(accountTbl[1], acc)
 			default:
-				accounts2 = append(accounts2, acc)
+				accountTbl[2] = append(accountTbl[2], acc)
 
 			}
 
 		}
-		programIDsMap[instruction.ProgramID()] = true
-
-	}
-
-	accounts = append(accounts, accounts1...)
-	accounts = append(accounts, accounts2...)
-	for programID := range programIDsMap {
-		accounts = append(accounts, &AccountMeta{PublicKey: programID})
-	}
-	uniqueMapAcc := map[PublicKey]*AccountMeta{} //make(map[PublicKey]*AccountMeta, len(accounts))
-	n := 0
-	for _, acc := range accounts {
-		if a := uniqueMapAcc[acc.PublicKey]; a != nil {
-			a.IsWritable = a.IsWritable || acc.IsWritable
-		} else {
-			accounts[n] = acc
-			uniqueMapAcc[acc.PublicKey] = acc
-			n++
+		if a := uniqueMapAcc[instruction.ProgramID()]; a != nil {
+			continue
 		}
+		acc := &AccountMeta{PublicKey: instruction.ProgramID()}
+		accountTbl[3] = append(accountTbl[3], acc)
+		uniqueMapAcc[acc.PublicKey] = acc
+
 	}
-	allKeys := accounts[:n]
 	trans = &Transaction{
 		Message: Message{
 			RecentBlockhash: recentBlockHash,
-			AccountKeys:     make([]PublicKey, 0, len(allKeys)),
+			AccountKeys:     make([]PublicKey, 0, len(uniqueMapAcc)),
 			Instructions:    make([]CompiledInstruction, len(instructions)),
 		},
 	}
 	message := &trans.Message
 	lookupsMap := make(map[PublicKey]lookupMap)
-	for idx, acc := range allKeys {
-		if idx != 0 && !acc.IsSigner && !programIDsMap[acc.PublicKey] {
-			addressLookupKeyEntry, isPresentedInTables := addressLookupKeysMap[acc.PublicKey]
-			// skip fee payer
-			if isPresentedInTables {
-				lookup := lookupsMap[addressLookupKeyEntry.addressTable]
-				if acc.IsWritable {
-					lookup.WritableIndexes = append(lookup.WritableIndexes, addressLookupKeyEntry.index)
-					lookup.Writable = append(lookup.Writable, acc.PublicKey)
-				} else {
-					lookup.ReadonlyIndexes = append(lookup.ReadonlyIndexes, addressLookupKeyEntry.index)
-					lookup.Readonly = append(lookup.Readonly, acc.PublicKey)
+	for iTbl, accounts := range accountTbl {
+		for _, acc := range accounts {
+			if iTbl > 0 && iTbl < 3 {
+				addressLookupKeyEntry, isPresentedInTables := addressLookupKeysMap[acc.PublicKey]
+				// skip fee payer
+				if isPresentedInTables {
+					lookup := lookupsMap[addressLookupKeyEntry.addressTable]
+					if acc.IsWritable {
+						lookup.WritableIndexes = append(lookup.WritableIndexes, addressLookupKeyEntry.index)
+						lookup.Writable = append(lookup.Writable, acc.PublicKey)
+					} else {
+						lookup.ReadonlyIndexes = append(lookup.ReadonlyIndexes, addressLookupKeyEntry.index)
+						lookup.Readonly = append(lookup.Readonly, acc.PublicKey)
+					}
+
+					lookupsMap[addressLookupKeyEntry.addressTable] = lookup
+					continue // prevent changing message.Header properties
 				}
-
-				lookupsMap[addressLookupKeyEntry.addressTable] = lookup
-				continue // prevent changing message.Header properties
 			}
-		}
+			message.AccountKeys = append(message.AccountKeys, acc.PublicKey)
 
-		message.AccountKeys = append(message.AccountKeys, acc.PublicKey)
+			if acc.IsSigner {
+				message.Header.NumRequiredSignatures++
+				if !acc.IsWritable {
+					message.Header.NumReadonlySignedAccounts++
+				}
+				continue
+			}
 
-		if acc.IsSigner {
-			message.Header.NumRequiredSignatures++
 			if !acc.IsWritable {
-				message.Header.NumReadonlySignedAccounts++
+				message.Header.NumReadonlyUnsignedAccounts++
 			}
-			continue
+
 		}
 
-		if !acc.IsWritable {
-			message.Header.NumReadonlyUnsignedAccounts++
-		}
 	}
 
 	var lookupsWritableKeys []PublicKey
@@ -384,7 +383,7 @@ func NewTransaction(instructions []Instruction, recentBlockHash Hash, opts ...Tr
 		idx++
 	}
 	for txIdx, instruction := range instructions {
-		accounts = instruction.Accounts()
+		accounts := instruction.Accounts()
 		accountIndex := make([]uint16, len(accounts))
 		for idx, acc := range accounts {
 			accountIndex[idx] = accountKeyIndex[acc.PublicKey]
