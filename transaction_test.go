@@ -322,6 +322,7 @@ BenchmarkNewTransaction-8         347487              2970 ns/op            1208
 BenchmarkNewTransaction-8   	  478252	      2268 ns/op	     864 B/op	      15 allocs/op
 BenchmarkNewTransaction-8         531816              2273 ns/op             864 B/op         13 allocs/op
 enchmarkNewTransaction-8         529341              2234 ns/op             864 B/op         13 allocs/op
+BenchmarkNewTransaction-8         878289              1395 ns/op             752 B/op         13 allocs/op
 */
 func BenchmarkNewTransaction(b *testing.B) {
 	debugNewTransaction = false

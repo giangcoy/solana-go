@@ -270,7 +270,7 @@ func NewTransaction(instructions []Instruction, recentBlockHash Hash, opts ...Tr
 	}
 
 	accountTbl[0] = append(accountTbl[0], feePayerAccount)
-	uniqueMapAcc := map[PublicKey]*AccountMeta{}
+	uniqueMapAcc := map[PublicKey]*AccountMeta{feePayerAccount.PublicKey: feePayerAccount}
 	for _, instruction := range instructions {
 		for _, acc := range instruction.Accounts() {
 			if a := uniqueMapAcc[acc.PublicKey]; a != nil {
@@ -290,12 +290,11 @@ func NewTransaction(instructions []Instruction, recentBlockHash Hash, opts ...Tr
 			}
 
 		}
-		if a := uniqueMapAcc[instruction.ProgramID()]; a != nil {
-			continue
+		if acc := uniqueMapAcc[instruction.ProgramID()]; acc == nil {
+			acc := &AccountMeta{PublicKey: instruction.ProgramID()}
+			accountTbl[3] = append(accountTbl[3], acc)
+			uniqueMapAcc[acc.PublicKey] = acc
 		}
-		acc := &AccountMeta{PublicKey: instruction.ProgramID()}
-		accountTbl[3] = append(accountTbl[3], acc)
-		uniqueMapAcc[acc.PublicKey] = acc
 
 	}
 	trans = &Transaction{
@@ -333,26 +332,16 @@ func NewTransaction(instructions []Instruction, recentBlockHash Hash, opts ...Tr
 				if !acc.IsWritable {
 					message.Header.NumReadonlySignedAccounts++
 				}
-				continue
-			}
-
-			if !acc.IsWritable {
+			} else if !acc.IsWritable {
 				message.Header.NumReadonlyUnsignedAccounts++
 			}
 
 		}
 
 	}
-
-	var lookupsWritableKeys []PublicKey
-	var lookupsReadOnlyKeys []PublicKey
 	if len(lookupsMap) > 0 {
 		lookups := make([]MessageAddressTableLookup, 0, len(lookupsMap))
-
 		for tablePubKey, l := range lookupsMap {
-			lookupsWritableKeys = append(lookupsWritableKeys, l.Writable...)
-			lookupsReadOnlyKeys = append(lookupsReadOnlyKeys, l.Readonly...)
-
 			lookups = append(lookups, MessageAddressTableLookup{
 				AccountKey:      tablePubKey,
 				WritableIndexes: l.WritableIndexes,
@@ -369,19 +358,20 @@ func NewTransaction(instructions []Instruction, recentBlockHash Hash, opts ...Tr
 	}
 
 	var idx uint16
-	accountKeyIndex := make(map[PublicKey]uint16, len(message.AccountKeys)+len(lookupsWritableKeys)+len(lookupsReadOnlyKeys))
+	accountKeyIndex := make(map[PublicKey]uint16, len(message.AccountKeys))
 	for _, acc := range message.AccountKeys {
 		accountKeyIndex[acc] = idx
 		idx++
 	}
-	for _, acc := range lookupsWritableKeys {
-		accountKeyIndex[acc] = idx
-		idx++
-	}
-	for _, acc := range lookupsReadOnlyKeys {
-		accountKeyIndex[acc] = idx
-		idx++
-	}
+	/*
+		for _, acc := range lookupsWritableKeys {
+			accountKeyIndex[acc] = idx
+			idx++
+		}
+		for _, acc := range lookupsReadOnlyKeys {
+			accountKeyIndex[acc] = idx
+			idx++
+		}*/
 	for txIdx, instruction := range instructions {
 		accounts := instruction.Accounts()
 		accountIndex := make([]uint16, len(accounts))
