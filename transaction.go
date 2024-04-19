@@ -306,6 +306,7 @@ func NewTransaction(instructions []Instruction, recentBlockHash Hash, opts ...Tr
 	}
 	message := &trans.Message
 	lookupsMap := make(map[PublicKey]lookupMap)
+	accountKeyIndex := make(map[PublicKey]uint16, len(uniqueMapAcc))
 	for iTbl, accounts := range accountTbl {
 		for _, acc := range accounts {
 			if iTbl > 0 && iTbl < 3 {
@@ -325,6 +326,7 @@ func NewTransaction(instructions []Instruction, recentBlockHash Hash, opts ...Tr
 					continue // prevent changing message.Header properties
 				}
 			}
+			accountKeyIndex[acc.PublicKey] = uint16(len(message.AccountKeys))
 			message.AccountKeys = append(message.AccountKeys, acc.PublicKey)
 
 			if acc.IsSigner {
@@ -356,22 +358,6 @@ func NewTransaction(instructions []Instruction, recentBlockHash Hash, opts ...Tr
 		}
 		message.SetAddressTableLookups(lookups)
 	}
-
-	var idx uint16
-	accountKeyIndex := make(map[PublicKey]uint16, len(message.AccountKeys))
-	for _, acc := range message.AccountKeys {
-		accountKeyIndex[acc] = idx
-		idx++
-	}
-	/*
-		for _, acc := range lookupsWritableKeys {
-			accountKeyIndex[acc] = idx
-			idx++
-		}
-		for _, acc := range lookupsReadOnlyKeys {
-			accountKeyIndex[acc] = idx
-			idx++
-		}*/
 	for txIdx, instruction := range instructions {
 		accounts := instruction.Accounts()
 		accountIndex := make([]uint16, len(accounts))
